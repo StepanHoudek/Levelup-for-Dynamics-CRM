@@ -25,7 +25,7 @@ export const checkDynamicsViaXrm = async (): Promise<boolean> => {
       // Fall through to script injection
     }
 
-    // Method 2: Fallback - directly inject detection script (Xrm check + script tag heuristics)
+    // Method 2: Fallback - directly inject detection script (Xrm check)
     try {
       const results = await chrome.scripting.executeScript({
         target: { tabId: tab.id },
@@ -40,24 +40,10 @@ export const checkDynamicsViaXrm = async (): Promise<boolean> => {
               }
             }
           } catch (error) {
-            // Continue with script detection
+            // Xrm not available
           }
 
-          try {
-            const scripts = Array.from(document.querySelectorAll('script[src]'));
-            const hasDynamicsScript = scripts.some(script => {
-              const src = (script as HTMLScriptElement).src;
-              return (
-                src.indexOf('/uclient/scripts') !== -1 ||
-                src.indexOf('/_static/_common/scripts/PageLoader.js') !== -1 ||
-                src.indexOf('/_static/_common/scripts/crminternalutility.js') !== -1
-              );
-            });
-
-            return hasDynamicsScript;
-          } catch (error) {
-            return false;
-          }
+          return false;
         },
       });
 
