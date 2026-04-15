@@ -81,7 +81,7 @@ class ContentScript {
   }
 
   private async isDynamics365Page(): Promise<boolean> {
-    // Method 1: Check for Xrm.Utility.getGlobalContext()
+    // Check for Xrm.Utility.getGlobalContext()
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const win = window as any;
@@ -93,25 +93,6 @@ class ContentScript {
       }
     } catch (error) {
       // Continue with other checks if Xrm check fails
-    }
-
-    // Method 2: Check for Dynamics 365 specific script tags
-    try {
-      const scripts = Array.from(document.querySelectorAll('script[src]'));
-      const hasDynamicsScript = scripts.some(script => {
-        const src = (script as HTMLScriptElement).src;
-        return (
-          src.indexOf('/uclient/scripts') !== -1 ||
-          src.indexOf('/_static/_common/scripts/PageLoader.js') !== -1 ||
-          src.indexOf('/_static/_common/scripts/crminternalutility.js') !== -1
-        );
-      });
-
-      if (hasDynamicsScript) {
-        return true;
-      }
-    } catch (error) {
-      // Continue if script detection fails
     }
 
     return false;
